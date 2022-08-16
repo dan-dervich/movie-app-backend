@@ -8,6 +8,11 @@ const { hashPWD, comparePWD } = require('../encrypt')
 
 router.use(cors({origin: '*'}))
 router.use(express.json())
+router.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 
 router.post('/login', async (req,res)=> {
     const checkEmailAndUsername = await User.findOne({"email": req.body.email})

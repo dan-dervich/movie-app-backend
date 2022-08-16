@@ -5,7 +5,11 @@ const User = require('../db/user')
 
 router.use(cors({origin: '*'}))
 router.use(express.json())
-
+router.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 
 router.post('/add-friend/:id/:username', async (req,res)=> {
     const docs = await User.updateOne({_id: req.body._id}, {$addToSet: {"linkedUsers": [{username: req.params.username, userId: req.params.id}]}})

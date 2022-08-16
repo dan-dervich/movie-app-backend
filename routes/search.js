@@ -6,6 +6,12 @@ const User = require('../db/user')
 
 router.use(cors({origin: '*'}))
 router.use(express.json())
+router.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+
 
 router.get('/user/:sq/:id', async (req,res)=> {
     const {linkedUsers, username} = await User.findOne({"_id": req.params.id})
