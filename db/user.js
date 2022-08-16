@@ -16,6 +16,8 @@ const schema = new Schema({
         username: String,
         userId: String,
     }],
+    // store the ObjectIds of the movieLists they're in
+    movieLists: [String]
 }, {
     collection: "user"
 })
