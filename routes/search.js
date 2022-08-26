@@ -40,8 +40,8 @@ router.get('/users/:id', async (req, res) => {
     var docs = await User.findById(req.params.id)
     let index = 0
     // loop through each user and check if that user has added them back
-    let arr = docs.linkedUsers
-    docs.linkedUsers.forEach(async ({username, userId}) => {
+    let arr = docs?.linkedUsers
+    docs?.linkedUsers.forEach(async ({username, userId}) => {
         var {linkedUsers} = await User.findById(userId)
         let notFound = true;
         if(linkedUsers.length > 0 ) {
@@ -54,6 +54,10 @@ router.get('/users/:id', async (req, res) => {
         }
         index += 1
     })
+    if(docs == null) {
+        res.json({data: []})
+        return;
+    } 
     res.json(arr)
 })
 

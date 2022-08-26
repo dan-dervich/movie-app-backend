@@ -9,10 +9,10 @@ connect()
 
 const schema = new Schema({
     users: [String],
+    listAdmin: String, // username of the admin of the list
     movieListName: {required: true, type: String},
     movieList: [{
-        movieName: String,
-        movieId: String,
+        movieId: String, // https://api.themoviedb.org/3/movie/${id}?api_key=6613a07317df91e35dcaa81f86ebfc97&language=es
         agreedToWatch: [{
             username: String,
             agreedToWatch: Boolean

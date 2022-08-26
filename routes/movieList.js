@@ -16,6 +16,7 @@ router.use(function(req, res, next) {
 router.post('/add', async (req,res)=>{ 
     const docs = new movieList({
         users: req.body.users,
+        listAdmin: req.body.users[req.body.users.length-1],
         movieListName: req.body.movieListName,
     })
     docs.save()
@@ -23,6 +24,26 @@ router.post('/add', async (req,res)=>{
         const docs1 = await User.updateOne({username: username}, {$addToSet: { movieLists: docs._id}})
         console.log(docs1)
     });
+    res.json({status: true})
+})
+
+router.post('/add-movies', async (req,res)=>{
+    console.log(req.body)
+    for(let j = 0; j < req.body.length; j++) { 
+        const docs = await movieList.updateOne({_id: req.body[j].listId}, {$addToSet: {movieList: {movieId: req.body[j].movieId, agreedToWatch: []}}})
+        const user = await movieList.findOne({_id: req.body[j].listId})
+        let _id;
+        console.log(docs)
+        for(let i = 0; i < user.movieList.length; i++) { 
+            if(req.body[j].movieId == Number(user.movieList[i].movieId)) {
+                _id = user.movieList[i]._id
+            }
+        }
+        for(let i = 0; i < user.users.length; i++) {
+                const docs1 = await movieList.updateOne({"movieList._id": _id}, {$addToSet: { "movieList.$.agreedToWatch": {username: user.users[i], agreedToWatch: false}}}) 
+                console.log("docs1", docs1)
+            }
+        }
     res.json({status: true})
 })
 
@@ -35,6 +56,30 @@ router.get('/get/:username', async (req,res) => {
         arr.push(docs1)
     }
     res.json(arr)
+})
+
+router.post('/remove-friend', async (req, res)=> {
+    const {listAdmin} = await movieList.findOne({_id: req.body.listId})
+    for(let i in req.body.userP) {
+        if(listAdmin != req.body.userP[i]) {
+            const removeFromUserList = await User.updateOne({username: req.body.userP[i]}, {$pull: {movieLists: req.body.listId}})
+            const docs = await movieList.updateOne({_id: req.body.listId}, {$pull: {users: req.body.userP[i]}})
+            console.log(docs)
+            console.log(removeFromUserList)
+        }
+    }
+    res.json({status: true})
+})
+
+router.post('/remove', async (req,res)=> {
+    const removeUsers = await movieList.findOne({_id: req.body._id})
+    for(let i = 0; i< removeUsers.users.length; i++) {
+        const r = await User.updateOne({username: removeUsers.users[i]}, {$pull: {movieLists: removeUsers._id}})
+        console.log(r)
+    }
+    const docs = await movieList.deleteOne({_id: req.body._id})
+    console.log(docs);
+    res.json({status: true})
 })
 
 
