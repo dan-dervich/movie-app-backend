@@ -12,7 +12,7 @@ const schema = new Schema({
     listAdmin: String, // username of the admin of the list
     movieListName: {required: true, type: String},
     movieList: [{
-        movieId: String, // https://api.themoviedb.org/3/movie/${id}?api_key=6613a07317df91e35dcaa81f86ebfc97&language=es
+        movieId: {type: String, index: true}, // https://api.themoviedb.org/3/movie/${id}?api_key=6613a07317df91e35dcaa81f86ebfc97&language=es
         agreedToWatch: [{
             username: String,
             agreedToWatch: Boolean

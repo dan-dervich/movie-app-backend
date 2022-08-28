@@ -82,6 +82,21 @@ router.post('/remove', async (req,res)=> {
     res.json({status: true})
 })
 
+router.get('/id/:id', async (req,res)=> {
+    const docs = await movieList.findById(req.params.id).select('movieList')
+    res.json(docs)
+})
 
+router.post('/remove-from-list/:id', async (req,res)=>{
+    const docs = await movieList.updateOne({_id: req.params.id}, {$pull: {movieList: {movieId: req.body.movieId+''}}})
+    console.log(docs)
+    res.json({status: true})
+})
+
+router.post('/agree-to-watch/:id', async (req,res)=> {
+    const docs = await movieList.updateOne({"movieList.agreedToWatch._id": req.params.id}, {movieList: {agreedToWatch: {$set:  {agreedToWatch: req.body.aw, username: req.body.username}}}})
+    console.log(docs)
+        res.json({status: true})
+})
 
 module.exports = router
