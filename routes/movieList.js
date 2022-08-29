@@ -95,19 +95,22 @@ router.post('/remove-from-list/:id', async (req,res)=>{
 
 router.post('/agree-to-watch/:id', async (req,res)=> {
     console.log(req.body.agreedToWatchId)
-    const docs = await movieList.findOne({"movieList.agreedToWatch._id": req.body.agreedToWatchId})
-    let obj = JSON.parse(JSON.stringify(docs));
-    for(let i = 0; i < obj.movieList.length; i++) {
-        for(let j = 0; j < obj.movieList[i].agreedToWatch.length; j++) {
-            if(obj.movieList[i].agreedToWatch[j]._id == req.body.agreedToWatchId) {
-                if(obj.movieList[i].agreedToWatch[j].username == req.body.username) {
-                    obj.movieList[i].agreedToWatch[j].agreedToWatch = req.body.aw;
-                }
+    const docs = await movieList.findOne({"_id": req.params.id})
+    if(docs !== null) {
+        let obj = JSON.parse(JSON.stringify(docs));
+        for(let i = 0; i < obj.movieList.length; i++) {
+            for(let j = 0; j < obj.movieList[i].agreedToWatch.length; j++) {
+                if(obj.movieList[i].agreedToWatch[j]._id == req.body.agreedToWatchId) {
+                    if(obj.movieList[i].agreedToWatch[j].username == req.body.username) {
+                        console.log("HEYY")
+                        obj.movieList[i].agreedToWatch[j].agreedToWatch = req.body.aw;
+                    }
             } 
         }
     }
     const docs1 = await movieList.updateOne({_id: req.params.id}, obj)
     console.log(docs1)
+}
     res.json({status: true})
 })
 
